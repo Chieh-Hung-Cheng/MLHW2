@@ -1,0 +1,6 @@
+*.pt
+*.zip
+/data
+/.model
+/runs
+/output

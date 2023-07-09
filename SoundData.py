@@ -101,7 +101,7 @@ class SoundDataset(Dataset):
 
         if self.y is not None:
             self.y = torch.tensor(np.concatenate(self.y, axis=0), dtype=torch.int64).view(-1, )
-            self.y = torch.nn.functional.one_hot(self.y).to(torch.float32)
+            # self.y = torch.nn.functional.one_hot(self.y).to(torch.float32)
 
     def __len__(self):
         if self.y is not None:

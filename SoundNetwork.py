@@ -1,38 +1,35 @@
 import torch
 import torch.nn as nn
 
+class BasicBlock(nn.Module):
+    def __init__(self, input_dim, output_dim):
+        super().__init__()
+        self.block = nn.Sequential(
+            nn.Linear(input_dim, output_dim),
+            nn.ReLU(),
+            nn.BatchNorm1d(output_dim),
+            nn.Dropout(p=0.2)
+        )
+    def forward(self, x):
+        return self.block(x)
+
+
 class SoundNetwork(nn.Module):
     def __init__(self, window):
         super().__init__()
         self.F = 2*window + 1 # 11
         # input is (2*window, 39): (F=11, 39)
-        # forward: change to (39, F=11)
-        f0 = self.F - 3 + 1
-        f1 = f0 - 3 + 1
         self.net = nn.Sequential(
-            nn.Conv1d(39, 30, 3),
-            nn.ReLU(),
-            nn.Conv1d(30, 15, 3),
-            nn.ReLU(),
-            nn.Flatten(),
-            nn.Linear(f1 * 15, 80),
-            nn.ReLU(),
-            nn.Linear(80, 60),
-            nn.ReLU(),
-            nn.Linear(60, 41),
-            nn.ReLU(),
+            nn.Flatten(start_dim=1), # (429, )
+            BasicBlock(429, 256),
+            BasicBlock(256, 256),
+            BasicBlock(256, 256),
+            nn.Linear(256, 41),
             nn.Softmax(dim=1)
         )
-        self.conv_0 = nn.Conv1d(39, 30, 3) # (30, F-3+1(9))
-        self.conv_1 = nn.Conv1d(30, 15, 3) # (15, F-3+1-3+1(7))
-        # flatten (105)
-        self.linear_0 = nn.Linear(f1*15, 80)
-        self.lienar_1 = nn.Linear(80, 60)
-        self.linear_2 = nn.Linear(60, 41)
-        self.softmax = nn.Softmax()
+
 
     def forward(self, x):
-        x = x.permute(0, 2 ,1)
         x = self.net(x)
         return x.squeeze()
 

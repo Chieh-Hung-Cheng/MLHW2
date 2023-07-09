@@ -54,7 +54,8 @@ class Trainer:
                 loss_record.append(loss.detach().item())
 
                 label_pred = torch.argmax(y_pred, dim=1)
-                label_truth = torch.argmax(y_b, dim=1)
+                label_truth = y_b
+                # label_truth = torch.argmax(y_b, dim=1)
                 correct_count += torch.sum(label_pred == label_truth)
                 item_count += len(y_b)
 

@@ -8,7 +8,7 @@ class BasicBlock(nn.Module):
             nn.Linear(input_dim, output_dim),
             nn.ReLU(),
             nn.BatchNorm1d(output_dim),
-            nn.Dropout(p=0.2)
+            nn.Dropout(p=0.5)
         )
     def forward(self, x):
         return self.block(x)
@@ -21,11 +21,11 @@ class SoundNetwork(nn.Module):
         # input is (2*window, 39): (F=11, 39)
         self.net = nn.Sequential(
             nn.Flatten(start_dim=1), # (429, )
-            BasicBlock(429, 256),
-            BasicBlock(256, 256),
-            BasicBlock(256, 256),
-            nn.Linear(256, 41),
-            nn.Softmax(dim=1)
+            BasicBlock(429, 512),
+            BasicBlock(512, 256),
+            BasicBlock(256, 128),
+            BasicBlock(128, 64),
+            nn.Linear(64, 41)
         )
 
 
